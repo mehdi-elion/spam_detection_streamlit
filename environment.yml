@@ -1,0 +1,28 @@
+name: spam_detection_streamlit
+
+channels:
+  - defaults
+  - conda-forge
+
+dependencies:
+ - python
+ - jupyterlab
+ - pre-commit
+ - pip
+ - pip:
+   # graphing libraries
+   - matplotlib
+   - plotly
+   # utils
+   - joblib
+   #- re
+   # data science
+   - pandas
+   - scikit-learn
+   - lime
+   # deployment
+   - streamlit
+   
+   
+   
+   
