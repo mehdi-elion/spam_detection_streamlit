@@ -5,6 +5,9 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
 import streamlit as st
 
+from lime.lime_text import LimeTextExplainer
+import streamlit.components.v1 as components
+
 
 # create a header
 st.write("# Spam Detection Engine")
@@ -21,7 +24,7 @@ def preprocessor(text):
     return text
 
 model = joblib.load('spam_classifier.joblib')
-classes = list(model.classes_)
+class_names = list(model.classes_)
 
 
 # Generating and Displaying Predictions
@@ -30,10 +33,23 @@ def classify_message(model, message):
     probs = model.predict_proba([message])
     return {
         'label': label, 
-        'probability': probs[0][classes.index(label)]
+        'probability': probs[0][class_names.index(label)]
     }
-
 
 if message_text != '':
   result = classify_message(model, message_text)
   st.write(result)
+
+    
+
+# explaining predictions with lime
+explain_pred = st.button('Explain Predictions')
+
+if explain_pred:
+    with st.spinner('Generating explanations'):
+        explainer = LimeTextExplainer(class_names=class_names)
+        exp = explainer.explain_instance(
+            message_text, 
+            model.predict_proba,
+            num_features=10)
+        components.html(exp.as_html(), height=800)
